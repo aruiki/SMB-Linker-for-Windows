@@ -61,6 +61,10 @@ SMB Linker はサーバーが SMB のポート（TCP 445）に応答すること
 
 <p align="center"><img src="docs/screenshots/ja-edit.png" width="680" alt="ドライブの編集：名前とアイコン"></p>
 
+設定すると、エクスプローラーにはこのように表示されます（実際の画面）。Windows 標準の「共有名 (\\\\server)」ではなく、**TrueNAS** という名前とクラウドのドライブアイコンで表示されています。
+
+<p align="center"><img src="docs/screenshots/explorer.png" width="435" alt="エクスプローラーに反映されたドライブ名とアイコン"></p>
+
 Windows 11 になじむフラットなアイコンを 13 種類内蔵。自分の `.ico` も使えます。
 
 <p align="center"><img src="docs/icons-preview.png" width="760" alt="内蔵ドライブアイコン"></p>
