@@ -61,9 +61,9 @@ Give each drive a real name and icon in File Explorer, something **Windows has n
 
 <p align="center"><img src="docs/screenshots/en-edit.png" width="680" alt="Edit a drive: name and icon"></p>
 
-…and this is what File Explorer shows — a real screenshot. The share appears as **TrueNAS** with the cloud drive icon instead of Windows' generic *"share (\\\\server)"*:
+…and this is what File Explorer shows. The share appears as **TrueNAS** with the cloud drive icon instead of Windows' generic *"share (\\\\server)"*:
 
-<p align="center"><img src="docs/screenshots/explorer.png" width="435" alt="Custom drive name and icon applied in File Explorer"></p>
+<p align="center"><img src="docs/screenshots/explorer-en.png" width="435" alt="Custom drive name and icon applied in File Explorer"></p>
 
 13 built-in flat icons in the Windows 11 style — or use your own `.ico`:
 
