@@ -1,6 +1,6 @@
-# Generates every icon used by SmbAutoMount (original artwork, MIT licensed with the project).
-#   src/SmbAutoMount/Assets/app.ico              application icon
-#   src/SmbAutoMount/Assets/DriveIcons/*.ico     built-in drive icons for File Explorer
+# Generates every icon used by SMB Linker for Windows (original artwork, MIT licensed with the project).
+#   src/SMBLinker/Assets/app.ico              application icon
+#   src/SMBLinker/Assets/DriveIcons/*.ico     built-in drive icons for File Explorer
 #
 # Style: flat pictograms - solid fills only, no gradients, no gloss, no shadows, no outlines.
 # Overlays are separated from the drive by a transparent "knock-out" gap, so the icons work
@@ -9,7 +9,7 @@
 # Run with Windows PowerShell 5.1:  powershell -ExecutionPolicy Bypass -File tools\make-icons.ps1
 Add-Type -AssemblyName System.Drawing
 $ErrorActionPreference = 'Stop'
-$assets = Join-Path $PSScriptRoot '..\src\SmbAutoMount\Assets'
+$assets = Join-Path $PSScriptRoot '..\src\SMBLinker\Assets'
 $driveDir = Join-Path $assets 'DriveIcons'
 New-Item -ItemType Directory -Force $driveDir | Out-Null
 

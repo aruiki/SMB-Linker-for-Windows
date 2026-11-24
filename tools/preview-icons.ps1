@@ -1,7 +1,7 @@
 # Renders docs/icons-preview.png: every built-in icon at 256 px plus 48/32/24/16 px.
 param([string]$Background = 'F9F9F9', [string]$Out = (Join-Path $PSScriptRoot '..\docs\icons-preview.png'))
 Add-Type -AssemblyName System.Drawing
-$dir = Join-Path $PSScriptRoot '..\src\SmbAutoMount\Assets'
+$dir = Join-Path $PSScriptRoot '..\src\SMBLinker\Assets'
 $names = 'DriveIcons\drive-green', 'DriveIcons\drive-blue', 'DriveIcons\drive-orange', 'DriveIcons\drive-purple', 'DriveIcons\drive-red',
          'DriveIcons\drive-teal', 'DriveIcons\nas-rack', 'DriveIcons\drive-cloud', 'DriveIcons\drive-media', 'DriveIcons\drive-backup',
          'DriveIcons\drive-home', 'DriveIcons\drive-photo', 'DriveIcons\drive-lock', 'app'
