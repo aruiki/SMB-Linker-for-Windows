@@ -127,6 +127,9 @@ internal sealed class ReconnectService : IDisposable
         SetState(p, MountState.Disabled, Strings.T("state.disconnectedByUser"));
     }
 
+    /// <summary>Used only by --demo mode to show sample states without touching the network.</summary>
+    public void SetStateForDemo(MountProfile p, MountState state, string message) => _states[p.Id] = (state, message);
+
     public void Forget(MountProfile p)
     {
         _states.TryRemove(p.Id, out _);

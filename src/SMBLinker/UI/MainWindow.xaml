@@ -21,7 +21,7 @@
             </StackPanel>
         </Grid>
 
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer x:Name="ContentScroller" Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <StackPanel MaxWidth="1000" Padding="36,4,36,36" Spacing="{StaticResource SettingsCardSpacing}">
 
                 <!-- Page header -->
@@ -70,12 +70,12 @@
                             <tk:SettingsCard Header="{x:Bind Title, Mode=OneWay}" IsClickEnabled="True" Click="Card_Click"
                                              ActionIconToolTip="{ui:Tr Key=main.edit}">
                                 <tk:SettingsCard.HeaderIcon>
-                                    <FontIcon Glyph="&#xE8CE;" />
+                                    <ImageIcon Source="{x:Bind IconImage, Mode=OneWay}" />
                                 </tk:SettingsCard.HeaderIcon>
                                 <tk:SettingsCard.Description>
                                     <StackPanel Spacing="2">
-                                        <TextBlock Text="{x:Bind Subtitle, Mode=OneWay}" />
-                                        <TextBlock Text="{x:Bind Message, Mode=OneWay}" TextWrapping="Wrap"
+                                        <TextBlock Text="{x:Bind Subtitle, Mode=OneWay}" FontFamily="{StaticResource PathFontFamily}" />
+                                        <TextBlock Text="{x:Bind Message, Mode=OneWay}" TextWrapping="Wrap" FontFamily="{StaticResource PathFontFamily}"
                                                    Visibility="{x:Bind ShowMessage, Mode=OneWay}" />
                                     </StackPanel>
                                 </tk:SettingsCard.Description>

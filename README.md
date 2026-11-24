@@ -1,106 +1,153 @@
-# SMB Linker for Windows
+<p align="center">
+  <img src="docs/app-icon.png" width="96" alt="SMB Linker icon">
+</p>
 
-**Keep your NAS / SMB network drives connected on Windows — reliably.**
+<h1 align="center">SMB Linker for Windows</h1>
 
-[日本語はこちら](#日本語)
+<p align="center">
+  <b>Your NAS drives — always there.</b><br>
+  Keeps your NAS / SMB network drives connected on Windows 10 and 11,<br>
+  after every restart, sleep and network change.
+</p>
 
-> Formerly **SmbAutoMount**. Installing 1.1.0 or later upgrades it in place and keeps your drives, passwords and settings.
+<p align="center">
+  <a href="https://github.com/aruiki/smb-linker-windows/releases/latest"><img src="https://img.shields.io/github/v/release/aruiki/smb-linker-windows?label=download&style=for-the-badge&color=2563EB" alt="Download"></a>
+  <img src="https://img.shields.io/badge/Windows-10%20%7C%2011-0078D4?style=for-the-badge&logo=windows" alt="Windows 10 | 11">
+  <img src="https://img.shields.io/badge/x64%20%7C%20ARM64-555?style=for-the-badge" alt="x64 | ARM64">
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/aruiki/smb-linker-windows?style=for-the-badge&color=16A34A" alt="MIT license"></a>
+</p>
 
-SMB Linker is a small tray app for Windows 10/11 that mounts your NAS shares (TrueNAS, Synology, QNAP, Samba, Windows shares…) as drive letters and keeps them mounted.
+<p align="center">
+  English · <a href="README.ja.md">日本語</a>
+</p>
 
-It exists because Windows' own "Reconnect at sign-in" often fails: it tries to restore the drive **before the network is ready**, and you get *"The password is incorrect"*, a red ✖ on the drive, or error **1219** ("multiple connections to a server by the same user, using more than one user name") — even though your password is correct.
-
-## Features
-
-- **Waits for the network** — connects only after the server answers on TCP 445. Reconnects automatically after sign-in, wake from sleep, network changes and screen unlock, plus a periodic health check.
-- **Diagnose & repair** — step-by-step checks (name resolution, port 445, saved password, drive letter, stale mappings, conflicting sessions, real sign-in test) with one-click repair. Error 1219 is fixed by closing only the connections that use a *different* user name.
-- **Custom drive name and icon in File Explorer** — something Windows has no UI for. 13 built-in flat icons, or your own `.ico`.
-- **Notifications** — tray notifications when a drive disconnects, reconnects or fails to sign in.
-- **No account lockouts** — a rejected password is never retried automatically.
-- **Native Windows 11 look** — WinUI 3, Mica, settings-style cards, light/dark theme. Japanese and English.
-
-![Built-in drive icons](docs/icons-preview.png)
-
-## Install
-
-1. Download `SMBLinker-Setup-x.y.z-x64.exe` (or `-arm64`) from [Releases](https://github.com/aruiki/smb-linker-windows/releases).
-2. Run it. **No administrator rights needed** — it installs for your user only.
-3. Click **Add drive**, enter the server (you can paste `\\server\share`), user name and password, then **Test connection** and **Save**.
-
-> Windows SmartScreen may warn about an unknown publisher because the installer is not code-signed yet. Choose *More info → Run anyway*.
-
-Uninstalling disconnects the drives and removes the saved passwords and Explorer customisations.
-
-## Security
-
-- Passwords are stored only in **Windows Credential Manager** (encrypted with your Windows account via DPAPI). They are never written to config files or logs.
-- Configuration (`%APPDATA%\SMBLinker\config.json`) contains server, share, drive letter, user name and display settings — no secrets.
-- The app runs as your user (never elevated) and only changes per-user settings (`HKCU`).
-- Diagnostics reports you copy for bug reports contain no password.
-
-## How it works
-
-| Problem | What SMB Linker does |
-|---|---|
-| Windows restores drives before the network is up | Removes Windows' own persistent mapping for the drive and maps it itself once `\\server` answers on port 445 |
-| Error 1219 | Detects sessions to the same server with a different user name and closes them, then retries |
-| Wrong user sent (e.g. Microsoft account) | Always sends the configured user, qualified as `server\user` |
-| Stale "Unavailable" drive | Detects it and recreates the mapping |
-
-## Build from source
-
-Requirements: Windows 10/11, [.NET 10 SDK](https://dotnet.microsoft.com/download), [Inno Setup 6](https://jrsoftware.org/isinfo.php) (`winget install JRSoftware.InnoSetup`).
-
-```powershell
-.\build.ps1            # publish + installer for x64  -> dist\
-.\build.ps1 -Arch arm64
-dotnet build src\SMBLinker -c Debug   # just the app
-```
-
-Icons are generated from code: `powershell -ExecutionPolicy Bypass -File tools\make-icons.ps1`.
-
-## License
-
-[MIT](LICENSE). Icons are original artwork included under the same license.
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/en-main-dark.png">
+    <img src="docs/screenshots/en-main-light.png" width="760" alt="SMB Linker main window">
+  </picture>
+</p>
 
 ---
 
-## 日本語
+## Sound familiar?
 
-**Windows で NAS / SMB のネットワークドライブを確実につなぎっぱなしにするアプリです。**
+You restart your PC and your NAS drive has a red ✖. Windows says **"The password is incorrect"** — but it isn't. Or you get **error 1219**: *"Multiple connections to a server by the same user, using more than one user name, are not allowed."* You type the password again, it works… until the next restart.
 
-> 旧名 **SmbAutoMount**。1.1.0 以降をインストールすると、登録したドライブ・パスワード・設定を引き継いだまま上書きアップデートされます。
+The cause is Windows' own *"Reconnect at sign-in"*: it tries to restore your drives **before the network is ready**, fails, and leaves a broken connection behind.
 
-TrueNAS・Synology・QNAP・Samba・Windows共有などの共有フォルダをドライブ文字に割り当て、接続を維持します。
+**SMB Linker fixes this for good.** It waits until your NAS actually answers, then connects — every time.
 
-Windows標準の「サインイン時に再接続する」は、**ネットワークの準備ができる前に**ドライブを復元しようとして失敗しがちです。その結果、パスワードは正しいのに「パスワードが違います」と言われたり、ドライブに赤い✖が付いたり、エラー **1219**（同じサーバーに別のユーザー名で接続できません）が出たりします。SMB Linker はこの問題を根本から解決します。
+## Highlights
 
-### 主な機能
+### 🔌 Connects when the network is really ready
+SMB Linker checks that your server answers on the SMB port (TCP 445) before mapping the drive, and replaces Windows' unreliable sign-in reconnect. It reconnects automatically after:
 
-- **ネットワークを待ってから接続** — サーバーがポート445に応答してから接続します。サインイン時・スリープ復帰時・ネットワーク切り替え時・ロック解除時に自動で再接続し、定期的に状態も確認します。
-- **診断と自動修復** — 名前解決、ポート445、保存されたパスワード、ドライブ文字、古い割り当て、競合する接続、実際の認証テストを順に確認し、ワンクリックで修復します。エラー1219は「別のユーザー名の接続」だけを切断して解消します。
-- **エクスプローラーでのドライブ名・アイコン変更** — Windows標準ではできない設定です。内蔵アイコン13種類、または自分の `.ico` を使えます。
-- **通知** — 切断・再接続・認証失敗をトレイ通知でお知らせします。
-- **アカウントロックを防止** — 拒否されたパスワードで自動再試行はしません。
-- **Windows 11 純正の見た目** — WinUI 3、Mica、設定アプリ風のカード、ライト/ダークテーマ。日本語・英語対応。
+- signing in, waking from sleep, unlocking the screen
+- switching Wi-Fi / Ethernet / VPN
+- the NAS rebooting (a health check runs every minute)
 
-### インストール
+Drives that were connected the old way are taken over seamlessly — no need to set them up again.
 
-1. [Releases](https://github.com/aruiki/smb-linker-windows/releases) から `SMBLinker-Setup-x.y.z-x64.exe`（ARM版は `-arm64`）をダウンロードします。
-2. 実行します。**管理者権限は不要**です（ユーザー単位でインストールされます）。
-3. 「ドライブを追加」でサーバー（`\\server\share` の貼り付けも可）、ユーザー名、パスワードを入力し、「接続テスト」→「保存」。
+### 🩺 Diagnose and repair in one click
+When something is wrong, SMB Linker tells you **what** and **why** — in plain language — and fixes it.
 
-> インストーラーはまだコード署名していないため、SmartScreen の警告が出ることがあります。「詳細情報」→「実行」を選んでください。
+<p align="center"><img src="docs/screenshots/en-diag.png" width="680" alt="Connection diagnostics"></p>
 
-アンインストールすると、ドライブの切断・保存したパスワードとエクスプローラー設定の削除まで行います。
+It checks name resolution, the SMB port, the saved password, the drive letter, stale "unavailable" mappings, Windows' own racing reconnect, and conflicting sessions — then runs a real sign-in test. **Error 1219 is repaired automatically** by closing only the connections that use a *different* user name. Copy the report for a bug report — it never contains your password.
 
-### セキュリティ
+### 🎨 Your drives, your way — in File Explorer
+Give each drive a real name and icon in File Explorer, something **Windows has no setting for**. Instead of *"media (\\\\nas.local)"* you see **Media**, with the icon you picked.
 
-- パスワードは **Windows資格情報マネージャー** にのみ保存されます（Windowsアカウントに紐づいて DPAPI で暗号化）。設定ファイルやログには書きません。
-- 設定ファイル（`%APPDATA%\SMBLinker\config.json`）にはサーバー、共有名、ドライブ文字、ユーザー名、表示設定だけが入ります。
-- アプリは常に通常ユーザー権限で動き、ユーザー単位の設定（`HKCU`）だけを変更します。
-- 不具合報告用にコピーできる診断レポートにはパスワードは含まれません。
+<p align="center"><img src="docs/screenshots/en-edit.png" width="680" alt="Edit a drive: name and icon"></p>
 
-### ライセンス
+13 built-in flat icons in the Windows 11 style — or use your own `.ico`:
 
-[MIT](LICENSE)。アイコンは本プロジェクトのオリジナル作品で、同じライセンスで提供します。
+<p align="center"><img src="docs/icons-preview.png" width="760" alt="Built-in drive icons"></p>
+
+### 🪟 Feels like part of Windows
+Built with **WinUI 3** — Mica, settings-style cards, light and dark theme, and the same controls as Windows 11 Settings. It lives quietly in the notification area and only speaks up when a drive disconnects, reconnects or fails to sign in. English and Japanese.
+
+## Security & privacy
+
+Your NAS holds your files. SMB Linker is designed to be boring and safe:
+
+| | |
+|---|---|
+| 🔐 **Passwords stay in Windows** | Stored only in **Windows Credential Manager**, encrypted with your Windows account (DPAPI). Never written to config files, logs or diagnostic reports. |
+| 👤 **Runs as you, never as admin** | No administrator rights to install or run, no background service, no UAC prompts. It only changes per-user settings (`HKCU`). |
+| 🚫 **No telemetry** | SMB Linker sends nothing anywhere. The only network traffic it creates is to the servers you add. |
+| 🔒 **No account lockouts** | A rejected password is never retried automatically — you are asked to fix it instead. |
+| 🧹 **Leaves nothing behind** | Uninstalling disconnects the drives and removes saved passwords, Explorer customisations and the startup entry. |
+| 📖 **Open source** | Every line is here under the MIT license. Builds are produced by GitHub Actions from this repository. |
+
+## Windows alone vs. SMB Linker
+
+| | Windows "Reconnect at sign-in" | SMB Linker |
+|---|:---:|:---:|
+| Waits for the network before connecting | ❌ | ✅ |
+| Reconnects after sleep / network change | ❌ | ✅ |
+| Explains why a drive won't connect | ❌ | ✅ |
+| Fixes error 1219 | ❌ | ✅ |
+| Custom drive name and icon in Explorer | ❌ | ✅ |
+| Notifications on disconnect / reconnect | ❌ | ✅ |
+
+## Install
+
+1. Download **`SMBLinker-Setup-x.y.z-x64.exe`** (or `-arm64`) from [Releases](https://github.com/aruiki/smb-linker-windows/releases/latest).
+2. Run it — no administrator rights needed.
+3. Click **Add drive**, enter the server (you can paste `\\server\share`), your user name and password, press **Test connection**, then **Save**.
+
+That's it. SMB Linker starts with Windows and keeps the drive connected from now on.
+
+> **Requirements:** Windows 10 (1809) or later, or Windows 11 · x64 or ARM64 · works with TrueNAS, Synology, QNAP, Samba, Windows shares and any SMB server.
+>
+> The installer is not code-signed yet, so Windows SmartScreen may show *"Windows protected your PC"*. Click **More info → Run anyway**.
+
+## FAQ
+
+<details>
+<summary><b>Do I have to remove my existing mapped drives first?</b></summary>
+
+No. Add the same drive letter in SMB Linker and it takes over the existing mapping, including removing Windows' own sign-in reconnect for that drive.
+</details>
+
+<details>
+<summary><b>Where is my password stored?</b></summary>
+
+In Windows Credential Manager (*Control Panel → Credential Manager → Windows Credentials → Generic Credentials*), under `SMBLinker:…`. Nowhere else.
+</details>
+
+<details>
+<summary><b>Can I use my Windows account instead of a separate user?</b></summary>
+
+Yes — leave the user name empty and Windows sends your current credentials.
+</details>
+
+<details>
+<summary><b>What happened to SmbAutoMount?</b></summary>
+
+That was this app's name before 1.1.0. Installing 1.1.0 or later upgrades it in place and keeps your drives, passwords and settings.
+</details>
+
+## For developers
+
+Requirements: [.NET 10 SDK](https://dotnet.microsoft.com/download) and [Inno Setup 6](https://jrsoftware.org/isinfo.php) (`winget install JRSoftware.InnoSetup`).
+
+```powershell
+.\build.ps1                     # publish + installer (x64) -> dist\
+.\build.ps1 -Arch arm64
+dotnet build src\SMBLinker -c Debug
+```
+
+| Tool | What it does |
+|---|---|
+| `tools\make-icons.ps1` | Generates the app icon and all built-in drive icons from code |
+| `tools\screenshots.ps1` | Captures the README screenshots from the app's `--demo` mode (sample data only) |
+| `tools\preview-icons.ps1` | Renders `docs/icons-preview.png` |
+
+Issues and pull requests are welcome.
+
+## License
+
+[MIT](LICENSE) · Icons are original artwork included under the same license.

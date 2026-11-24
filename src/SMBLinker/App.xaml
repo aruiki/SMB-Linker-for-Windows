@@ -9,6 +9,8 @@
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
             </ResourceDictionary.MergedDictionaries>
             <x:Double x:Key="SettingsCardSpacing">4</x:Double>
+            <!-- Font for UNC paths. Replaced with the Japanese UI font when the app runs in Japanese. -->
+            <FontFamily x:Key="PathFontFamily">Segoe UI Variable Text, Segoe UI</FontFamily>
             <Style x:Key="SectionHeaderStyle" TargetType="TextBlock" BasedOn="{StaticResource BodyStrongTextBlockStyle}">
                 <Setter Property="Margin" Value="1,28,0,6" />
             </Style>

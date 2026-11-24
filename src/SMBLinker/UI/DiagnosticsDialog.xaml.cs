@@ -30,6 +30,25 @@ public sealed partial class DiagnosticsDialog : ContentDialog
         Opened += async (_, _) => await RunAsync();
     }
 
+    /// <summary>Demo mode: show a prepared report instead of running real checks.</summary>
+    internal DiagnosticsDialog(MountProfile profile, DiagReport prepared)
+    {
+        InitializeComponent();
+        _profile = profile;
+        _report = prepared;
+        TargetText.Text = $"{profile.LocalName}  →  {profile.RemotePath}";
+        Opened += (_, _) => Show(prepared);
+    }
+
+    private void Show(DiagReport report)
+    {
+        Items.ItemsSource = report.Items.Select(ToRow).ToList();
+        bool fail = report.Items.Any(i => i.Level == DiagLevel.Fail);
+        bool warn = report.Items.Any(i => i.Level == DiagLevel.Warn);
+        SummaryBar.Severity = fail ? InfoBarSeverity.Error : warn ? InfoBarSeverity.Warning : InfoBarSeverity.Success;
+        SummaryBar.Message = Strings.T(fail ? "diag.sumFail" : warn ? "diag.sumWarn" : "diag.sumOk");
+    }
+
     private async Task RunAsync()
     {
         IsPrimaryButtonEnabled = IsSecondaryButtonEnabled = false;

@@ -25,9 +25,20 @@ public partial class App : Application
     internal ReconnectService Service { get; private set; } = null!;
     internal DispatcherQueue Dispatcher { get; private set; } = null!;
     internal bool IsExiting => _exiting;
+    internal bool IsDemo { get; }
+    internal string? DemoOpen { get; }
 
     public App()
     {
+        var args = Environment.GetCommandLineArgs();
+        IsDemo = DemoData.IsDemo(args);
+        if (IsDemo)
+        {
+            DemoOpen = DemoData.Option(args, "demo-open");
+            var theme = DemoData.Option(args, "demo-theme");
+            if (theme == "dark") RequestedTheme = ApplicationTheme.Dark;
+            else if (theme == "light") RequestedTheme = ApplicationTheme.Light;
+        }
         InitializeComponent();
         UnhandledException += (_, e) =>
         {
@@ -51,6 +62,22 @@ public partial class App : Application
             // Called by the uninstaller: undo everything we changed outside our own folders.
             Cleanup();
             Exit();
+            return;
+        }
+
+        if (IsDemo)
+        {
+            // Screenshot mode: sample data only, no network, no tray, nothing saved.
+            Dispatcher = DispatcherQueue.GetForCurrentThread();
+            Config = DemoData.Config();
+            Strings.SetLanguage(DemoData.Option(cmd, "demo-lang") ?? "auto");
+            Service = new ReconnectService(() => Config);
+            for (int i = 0; i < Config.Profiles.Count; i++)
+            {
+                var (state, message) = DemoData.StateFor(i, Config.Profiles[i]);
+                Service.SetStateForDemo(Config.Profiles[i], state, message);
+            }
+            ShowMainWindow();
             return;
         }
 
@@ -90,6 +117,19 @@ public partial class App : Application
 
     internal void ShowMainWindow()
     {
+        if (_main == null && Strings.CultureName != "en-US")
+            Resources["PathFontFamily"] = Resources["ContentControlThemeFontFamily"];
+        if (_main == null && Strings.CultureName == "en-US")
+        {
+            // On a Japanese/Korean Windows the default UI font draws "\" as a currency sign.
+            // When the app itself is in English, use the Latin UI font so UNC paths read \\server\share.
+            var latin = new Microsoft.UI.Xaml.Media.FontFamily("Segoe UI Variable Text, Segoe UI");
+            Resources["ContentControlThemeFontFamily"] = latin;
+            // Plain TextBlocks (e.g. inside SettingsCard descriptions) don't inherit from controls.
+            var style = new Style(typeof(Microsoft.UI.Xaml.Controls.TextBlock));
+            style.Setters.Add(new Setter(Microsoft.UI.Xaml.Controls.TextBlock.FontFamilyProperty, latin));
+            Resources[typeof(Microsoft.UI.Xaml.Controls.TextBlock)] = style;
+        }
         _main ??= new MainWindow();
         _main.ShowAndActivate();
     }
@@ -108,6 +148,7 @@ public partial class App : Application
 
     internal void SaveConfig()
     {
+        if (IsDemo) return;
         try { ConfigStore.Save(Config); }
         catch (Exception ex) { Log.Error("Failed to save config", ex); }
     }

@@ -159,6 +159,9 @@ public sealed partial class ProfileDialog : ContentDialog
         }
     }
 
+    /// <summary>Demo mode: show a successful connection test.</summary>
+    internal void ShowDemoSuccess() => ShowResult(InfoBarSeverity.Success, Strings.T("pf.testOk"));
+
     private void ShowResult(InfoBarSeverity severity, string text)
     {
         ResultBar.Severity = severity;

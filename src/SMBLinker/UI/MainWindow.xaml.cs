@@ -55,11 +55,24 @@ public sealed partial class DriveItem : INotifyPropertyChanged
         _ => "SystemFillColorNeutralBrush",
     }];
 
+    /// <summary>The drive's own Explorer icon (built-in or custom .ico); the default drive icon otherwise.</summary>
+    public Microsoft.UI.Xaml.Media.Imaging.BitmapImage IconImage
+    {
+        get
+        {
+            var path = Profile.Icon?.Trim().Trim('"') ?? "";
+            if (!path.EndsWith(".ico", StringComparison.OrdinalIgnoreCase) || !System.IO.File.Exists(path))
+                path = Paths.DefaultDriveIcon;
+            return new Microsoft.UI.Xaml.Media.Imaging.BitmapImage(new Uri(path)) { DecodePixelWidth = 64 };
+        }
+    }
+
     public void Replace(MountProfile p)
     {
         Profile = p;
         Raise(nameof(Title));
         Raise(nameof(Subtitle));
+        Raise(nameof(IconImage));
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -86,7 +99,8 @@ public sealed partial class MainWindow : Window
         AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
 
         var scale = GetDpiForWindow(WinRT.Interop.WindowNative.GetWindowHandle(this)) / 96.0;
-        AppWindow.Resize(new SizeInt32((int)(980 * scale), (int)(760 * scale)));
+        int height = AppInstance.IsDemo ? 1000 : 760;   // demo: room for full screenshots
+        AppWindow.Resize(new SizeInt32((int)(980 * scale), (int)(height * scale)));
         if (AppWindow.Presenter is OverlappedPresenter op)
         {
             op.PreferredMinimumWidth = (int)(560 * scale);
@@ -98,6 +112,7 @@ public sealed partial class MainWindow : Window
         AppWindow.Closing += (_, e) =>
         {
             if (AppInstance.IsExiting) return;
+            if (AppInstance.IsDemo) { AppInstance.Exit(); return; }
             e.Cancel = true;
             AppWindow.Hide();
             AppInstance.OnMainWindowHidden();
@@ -105,6 +120,16 @@ public sealed partial class MainWindow : Window
 
         DriveList.ItemsSource = _items;
         foreach (var p in AppInstance.Config.Profiles) _items.Add(ToItem(p));
+
+        // Follow the app language (not Windows') for font fallback (\ vs ¥) and switch labels.
+        Root.Language = Strings.CultureName;
+        if (Strings.CultureName == "en-US")
+            ContentScroller.FontFamily = (Microsoft.UI.Xaml.Media.FontFamily)Application.Current.Resources["ContentControlThemeFontFamily"];
+        foreach (var t in new[] { StartupToggle, NotifyToggle, AutoFixToggle })
+        {
+            t.OnContent = Strings.T("common.on");
+            t.OffContent = Strings.T("common.off");
+        }
 
         _loading = true;
         StartupToggle.IsOn = StartupManager.IsEnabled();
@@ -116,6 +141,27 @@ public sealed partial class MainWindow : Window
 
         AboutCard.Description = Strings.F("main.version", typeof(App).Assembly.GetName().Version?.ToString(3) ?? "");
         UpdateEmpty();
+
+        if (AppInstance.IsDemo && AppInstance.DemoOpen != null)
+            Root.Loaded += async (_, _) => await OpenDemoDialogAsync(AppInstance.DemoOpen);
+    }
+
+    /// <summary>--demo-open=edit|diag: shows a dialog with sample data for screenshots.</summary>
+    private async Task OpenDemoDialogAsync(string which)
+    {
+        await Task.Delay(400);
+        var profiles = AppInstance.Config.Profiles;
+        if (which == "edit")
+        {
+            var dlg = new ProfileDialog(profiles[0]) { XamlRoot = Root.XamlRoot };
+            dlg.ShowDemoSuccess();
+            await ShowDialogAsync(dlg);
+        }
+        else if (which == "diag")
+        {
+            var p = profiles[^1];
+            await ShowDialogAsync(new DiagnosticsDialog(p, DemoData.Report(p)) { XamlRoot = Root.XamlRoot });
+        }
     }
 
     [System.Runtime.InteropServices.DllImport("user32.dll")]
@@ -269,6 +315,7 @@ public sealed partial class MainWindow : Window
         {
             dialog.Style ??= (Style)Application.Current.Resources["DefaultContentDialogStyle"];
             dialog.RequestedTheme = Root.ActualTheme;
+            dialog.Language = Strings.CultureName;
             return await dialog.ShowAsync();
         }
         finally

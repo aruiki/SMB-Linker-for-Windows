@@ -16,6 +16,9 @@ public static class Strings
         _current = lang == "ja" ? Ja : En;
     }
 
+    /// <summary>BCP-47 tag of the UI language, for XAML Language (font fallback, built-in control text).</summary>
+    public static string CultureName => ReferenceEquals(_current, _ja) ? "ja-JP" : "en-US";
+
     public static string T(string key) =>
         (_current ?? En).TryGetValue(key, out var v) ? v : En.TryGetValue(key, out var e) ? e : key;
 
@@ -31,6 +34,8 @@ public static class Strings
         ["common.save"] = "Save",
         ["common.cancel"] = "Cancel",
         ["common.close"] = "Close",
+        ["common.on"] = "On",
+        ["common.off"] = "Off",
 
         ["st.Unknown"] = "Checking…",
         ["st.Disabled"] = "Off",
@@ -193,6 +198,8 @@ public static class Strings
         ["common.save"] = "保存",
         ["common.cancel"] = "キャンセル",
         ["common.close"] = "閉じる",
+        ["common.on"] = "オン",
+        ["common.off"] = "オフ",
 
         ["st.Unknown"] = "確認中…",
         ["st.Disabled"] = "オフ",
