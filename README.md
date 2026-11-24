@@ -11,10 +11,10 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/aruiki/smb-linker-windows/releases/latest"><img src="https://img.shields.io/github/v/release/aruiki/smb-linker-windows?label=download&style=for-the-badge&color=2563EB" alt="Download"></a>
+  <a href="https://github.com/aruiki/SMB-Linker-for-Windows/releases/latest"><img src="https://img.shields.io/github/v/release/aruiki/SMB-Linker-for-Windows?label=download&style=for-the-badge&color=2563EB" alt="Download"></a>
   <img src="https://img.shields.io/badge/Windows-10%20%7C%2011-0078D4?style=for-the-badge&logo=windows" alt="Windows 10 | 11">
   <img src="https://img.shields.io/badge/x64%20%7C%20ARM64-555?style=for-the-badge" alt="x64 | ARM64">
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/aruiki/smb-linker-windows?style=for-the-badge&color=16A34A" alt="MIT license"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/aruiki/SMB-Linker-for-Windows?style=for-the-badge&color=16A34A" alt="MIT license"></a>
 </p>
 
 <p align="center">
@@ -94,7 +94,7 @@ Your NAS holds your files. SMB Linker is designed to be boring and safe:
 
 ## Install
 
-1. Download **`SMBLinker-Setup-x.y.z-x64.exe`** (or `-arm64`) from [Releases](https://github.com/aruiki/smb-linker-windows/releases/latest).
+1. Download **`SMBLinker-Setup-x.y.z-x64.exe`** (or `-arm64`) from [Releases](https://github.com/aruiki/SMB-Linker-for-Windows/releases/latest).
 2. Run it — no administrator rights needed.
 3. Click **Add drive**, enter the server (you can paste `\\server\share`), your user name and password, press **Test connection**, then **Save**.
 

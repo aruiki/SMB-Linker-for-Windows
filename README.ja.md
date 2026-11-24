@@ -11,10 +11,10 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/aruiki/smb-linker-windows/releases/latest"><img src="https://img.shields.io/github/v/release/aruiki/smb-linker-windows?label=download&style=for-the-badge&color=2563EB" alt="ダウンロード"></a>
+  <a href="https://github.com/aruiki/SMB-Linker-for-Windows/releases/latest"><img src="https://img.shields.io/github/v/release/aruiki/SMB-Linker-for-Windows?label=download&style=for-the-badge&color=2563EB" alt="ダウンロード"></a>
   <img src="https://img.shields.io/badge/Windows-10%20%7C%2011-0078D4?style=for-the-badge&logo=windows" alt="Windows 10 | 11">
   <img src="https://img.shields.io/badge/x64%20%7C%20ARM64-555?style=for-the-badge" alt="x64 | ARM64">
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/aruiki/smb-linker-windows?style=for-the-badge&color=16A34A" alt="MIT ライセンス"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/aruiki/SMB-Linker-for-Windows?style=for-the-badge&color=16A34A" alt="MIT ライセンス"></a>
 </p>
 
 <p align="center">
@@ -94,7 +94,7 @@ NAS には大切なファイルがあります。SMB Linker は「安全で、�
 
 ## インストール
 
-1. [Releases](https://github.com/aruiki/smb-linker-windows/releases/latest) から **`SMBLinker-Setup-x.y.z-x64.exe`**（ARM 版は `-arm64`）をダウンロードします。
+1. [Releases](https://github.com/aruiki/SMB-Linker-for-Windows/releases/latest) から **`SMBLinker-Setup-x.y.z-x64.exe`**（ARM 版は `-arm64`）をダウンロードします。
 2. 実行します。管理者権限は不要です。
 3. **「ドライブを追加」** でサーバー（`\\server\share` の貼り付けも可）、ユーザー名、パスワードを入力し、**「接続テスト」** → **「保存」**。
 

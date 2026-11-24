@@ -122,7 +122,7 @@
                     </tk:SettingsCard.HeaderIcon>
                     <StackPanel Orientation="Horizontal" Spacing="4">
                         <HyperlinkButton Content="{ui:Tr Key=main.logs}" Click="Logs_Click" />
-                        <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/aruiki/smb-linker-windows" />
+                        <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/aruiki/SMB-Linker-for-Windows" />
                     </StackPanel>
                 </tk:SettingsCard>
             </StackPanel>

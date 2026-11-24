@@ -19,7 +19,7 @@
 #define ShortName "SMB Linker"
 #define AppExe "SMBLinker.exe"
 #define LegacyName "SmbAutoMount"
-#define AppUrl "https://github.com/aruiki/smb-linker-windows"
+#define AppUrl "https://github.com/aruiki/SMB-Linker-for-Windows"
 
 [Setup]
 AppId={{6B0F5B8E-3C1D-4E3A-9B71-5A2E0C4D7F21}
