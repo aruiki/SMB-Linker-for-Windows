@@ -176,6 +176,28 @@ internal static class DriveMapper
         return Interpret(rc);
     }
 
+    /// <summary>
+    /// Removes Windows' own "reconnect at sign-in" entry (HKCU\Network\X) without disconnecting
+    /// the drive, so only SmbAutoMount restores it - after the network is ready.
+    /// </summary>
+    public static void ForgetWindowsPersistence(MountProfile p)
+    {
+        try
+        {
+            var key = $@"Network\{p.LocalName.TrimEnd(':')}";
+            using var k = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(key);
+            if (k == null) return;
+            var remote = k.GetValue("RemotePath") as string;
+            if (remote != null && !SameRemote(remote, p.RemotePath)) return; // someone else's mapping
+            Microsoft.Win32.Registry.CurrentUser.DeleteSubKeyTree(key, false);
+            Log.Info($"Removed Windows' remembered mapping for {p.LocalName}");
+        }
+        catch (Exception ex)
+        {
+            Log.Error("Could not remove Windows' remembered mapping", ex);
+        }
+    }
+
     public static int Unmount(MountProfile p) => WNet.CancelConnection(p.LocalName, forgetPersistent: true, force: true);
 
     /// <summary>Opens and closes a deviceless session to test credentials without touching drive letters.</summary>

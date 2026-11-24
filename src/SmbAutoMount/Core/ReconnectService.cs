@@ -183,6 +183,13 @@ internal sealed class ReconnectService : IDisposable
         if (code == Native.WNet.NO_ERROR && DriveMapper.SameRemote(remote, p.RemotePath)
             && await DriveMapper.IsAccessibleAsync(p.LocalName + "\\").ConfigureAwait(false))
         {
+            if (prev != MountState.Connected)
+            {
+                // Mapped by someone else (e.g. Windows at sign-in, or before the app was installed):
+                // take it over - stop Windows from racing us at the next sign-in and apply our name/icon.
+                DriveMapper.ForgetWindowsPersistence(p);
+                ExplorerCustomizer.Apply(p);
+            }
             SetState(p, MountState.Connected, Strings.T("state.connected"));
             return false;
         }
